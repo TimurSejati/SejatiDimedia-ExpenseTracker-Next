@@ -22,25 +22,28 @@ function BudgetItem({ budget }) {
               </h2>
             </div>
           </div>
-          <h2 className="text-lg font-bold text-primary">${budget?.amount}</h2>
+          <h2 className="text-lg font-bold text-primary">{parseFloat(budget?.amount).toLocaleString("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              })}</h2>
         </div>
         <div className="mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xxs text-slate-400">
+            <h2 className="text-xs text-slate-400">
+            Spend <br />
               {budget?.totalSpend
                 ? budget?.totalSpend.toLocaleString("id-ID", {
                     style: "currency",
                     currency: "IDR",
                   })
-                : 0}{" "}
-              Spend
+                : 0}
             </h2>
-            <h2 className="text-xxs text-slate-400">
+            <h2 className="text-xs text-slate-400">
+            Remaining <br />
               {(budget?.amount - budget?.totalSpend).toLocaleString("id-ID", {
                 style: "currency",
                 currency: "IDR",
               })}{" "}
-              Remaining
             </h2>
           </div>
           <div className="w-full h-2 rounded-full bg-slate-300">
