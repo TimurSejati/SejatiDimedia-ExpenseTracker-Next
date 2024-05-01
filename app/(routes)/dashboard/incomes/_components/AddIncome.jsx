@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { db } from "@/utils/dbConfig";
-import { Budgets, Expenses } from "@/utils/schema";
+import { Budgets, Incomes } from "@/utils/schema";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader } from "lucide-react";
+import { HandCoins } from "lucide-react";
 import { eq } from "drizzle-orm";
-import { ReceiptText } from "lucide-react";
 
-function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
+function AddIncome({ budgetId, user, refreshData, editIncomeData }) {
   const [name, setName] = useState();
   const [amount, setAmount] = useState();
   const [date, setDate] = useState();
@@ -18,34 +18,33 @@ function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
   const [stateButton, setStateButton] = useState("Create");
 
   useEffect(() => {
-    if (editExpenseData && Object.keys(editExpenseData).length > 0) {
-      setName(editExpenseData.name || ""); // Default to empty string if editExpenseData.name is undefined
-      setAmount(editExpenseData.amount || ""); // Similarly for amount
+    if (editIncomeData && Object.keys(editIncomeData).length > 0) {
+      setName(editIncomeData.name || ""); // Default to empty string if editIncomeData.name is undefined
+      setAmount(editIncomeData.amount || ""); // Similarly for amount
 
-      const [day, month, year] = editExpenseData.createdAt.split("/");
+      const [day, month, year] = editIncomeData.createdAt.split("/");
       const formattedDate = `${year}-${month}-${day}`;
       setDate(formattedDate);
 
-      if (editExpenseData.type === "update") {
+      if (editIncomeData.type === "update") {
         setStateButton("Update");
       } else {
         setStateButton("Copy");
       }
     }
-  }, [editExpenseData]); //
+  }, [editIncomeData]); //
 
-  const addNewExpense = async () => {
+  const addNewIncome = async () => {
     setLoading(true);
     const result = await db
-      .insert(Expenses)
+      .insert(Incomes)
       .values({
         name: name,
         amount: amount,
-        budgetId: budgetId,
         createdBy: user?.primaryEmailAddress?.emailAddress,
         createdAt: moment(date).format("DD/MM/yyy"),
       })
-      .returning({ insertedId: Budgets.id });
+      .returning();
 
     setName("");
     setAmount("");
@@ -53,25 +52,25 @@ function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
     if (result) {
       setLoading(false);
       refreshData();
-      toast("New expense added");
+      toast("New Income added");
     }
     setLoading(false);
   };
 
-  const updateExpense = async () => {
+  const updateIncome = async () => {
     const result = await db
-      .update(Expenses)
+      .update(Incomes)
       .set({
         name: name,
         amount: amount,
         createdAt: moment(date).format("DD/MM/yyy"),
       })
-      .where(eq(Expenses.id, editExpenseData?.id))
+      .where(eq(Incomes.id, editIncomeData?.id))
       .returning();
 
     if (result) {
       refreshData();
-      toast("Expense updated!");
+      toast("Income updated!");
       setName("");
       setAmount("");
       setDate("");
@@ -82,20 +81,20 @@ function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
   return (
     <div className="p-5 border rounded-lg">
       <div className="flex items-center gap-2">
-        <ReceiptText className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
-        <h2 className="text-lg font-bold">Add Expense</h2>
+        <HandCoins className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
+        <h2 className="text-lg font-bold">Add Income</h2>
       </div>
 
       <div className="mt-7">
-        <h2 className="my-1 font-medium text-black">Expense Name</h2>
+        <h2 className="my-1 font-medium text-black">Income Name</h2>
         <Input
-          placeholder="e.g. Bedroom Decor"
+          placeholder="e.g. Sallary of work"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div className="mt-2">
-        <h2 className="my-1 font-medium text-black">Expense Amount</h2>
+        <h2 className="my-1 font-medium text-black">Income Amount</h2>
         <Input
           placeholder="e.g. 10000"
           value={amount}
@@ -117,9 +116,9 @@ function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
       <Button
         onClick={() => {
           if (stateButton == "Create" || stateButton == "Copy") {
-            addNewExpense();
+            addNewIncome();
           } else {
-            updateExpense();
+            updateIncome();
           }
         }}
         disabled={!(name && amount && date) || loading}
@@ -128,15 +127,15 @@ function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
         {loading ? (
           <Loader className="animate-spin" />
         ) : stateButton == "Create" ? (
-          "Add New Expense"
+          "Add New Income"
         ) : stateButton == "Copy" ? (
-          "Copy Expense"
+          "Copy Income"
         ) : (
-          "Update Expense"
+          "Update Income"
         )}
       </Button>
     </div>
   );
 }
 
-export default AddExpense;
+export default AddIncome;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Pencil, Copy, Trash } from "lucide-react";
 import { db } from "@/utils/dbConfig";
-import { Expenses } from "@/utils/schema";
+import { Incomes } from "@/utils/schema";
 import { eq } from "drizzle-orm";
 import { toast } from "sonner";
 import {
@@ -16,31 +16,30 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-function ExpenseListTable({
-  expensesList,
+function IncomeListTable({
+  incomesList,
   refreshData,
   showActionList,
-  setEditExpenseData,
+  setEditIncomeData,
 }) {
-  const copyExpenseValues = async (expense, type) => {
-    setEditExpenseData({ ...expense, type });
+  const copyIncomeValues = async (income, type) => {
+    setEditIncomeData({ ...income, type });
   };
 
-  const deleteExpense = async (expenses) => {
+  const deleteIncome = async (incomes) => {
     const result = await db
-      .delete(Expenses)
-      .where(eq(Expenses.id, expenses.id))
+      .delete(Incomes)
+      .where(eq(Incomes.id, incomes.id))
       .returning();
 
     if (result) {
-      toast("Expenses deleted!");
+      toast("Incomes deleted!");
       refreshData();
     }
   };
 
   return (
     <div className="mt-3">
-      <h2 className="text-lg font-bold">Latest Expenses</h2>
       <div
         className={`grid grid-cols-${
           showActionList ? "4" : "3"
@@ -51,31 +50,31 @@ function ExpenseListTable({
         <h2 className="font-bold">Date</h2>
         {showActionList && <h2 className="font-bold">Action</h2>}
       </div>
-      {expensesList.map((expenses, index) => (
+      {incomesList.map((incomes, index) => (
         <div
           className={`grid grid-cols-${
             showActionList ? "4" : "3"
           } p-2 text-xs text-center lg:text-sm bg-slate-50`}
           key={index}
         >
-          <h2>{expenses.name}</h2>
+          <h2>{incomes.name}</h2>
           <h2>
-            {parseFloat(expenses.amount).toLocaleString("id-ID", {
+            {parseFloat(incomes.amount).toLocaleString("id-ID", {
               style: "currency",
               currency: "IDR",
             })}
           </h2>
-          <h2>{expenses.createdAt}</h2>
+          <h2>{incomes.createdAt}</h2>
           {showActionList && (
             <center>
               <div className="flex items-center justify-center gap-1">
                 <Pencil
                   className="w-4 h-4 cursor-pointer text-primary"
-                  onClick={() => copyExpenseValues(expenses, "update")}
+                  onClick={() => copyIncomeValues(incomes, "update")}
                 />
                 <Copy
                   className="w-4 h-4 text-orange-400 cursor-pointer"
-                  onClick={() => copyExpenseValues(expenses, "copy")}
+                  onClick={() => copyIncomeValues(incomes, "copy")}
                 />
 
                 <AlertDialog>
@@ -89,14 +88,12 @@ function ExpenseListTable({
                       </AlertDialogTitle>
                       <AlertDialogDescription>
                         This action cannot be undone. This will permanently
-                        delete your current budget along with expenses
+                        delete your current budget along with incomes
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() => deleteExpense(expenses)}
-                      >
+                      <AlertDialogAction onClick={() => deleteIncome(incomes)}>
                         Continue
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -111,4 +108,4 @@ function ExpenseListTable({
   );
 }
 
-export default ExpenseListTable;
+export default IncomeListTable;

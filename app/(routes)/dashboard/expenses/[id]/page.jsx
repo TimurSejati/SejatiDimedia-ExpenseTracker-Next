@@ -29,6 +29,8 @@ function ExpensesScreen({ params }) {
   const { user } = useUser();
   const [budgetInfo, setBudgetInfo] = useState();
   const [expensesList, setExpensesList] = useState([]);
+  const [editExpenseData, setEditExpenseData] = useState({});
+
   const route = useRouter();
   useEffect(() => {
     user && getBudgetInfo();
@@ -122,12 +124,16 @@ function ExpensesScreen({ params }) {
           budgetId={params.id}
           user={user}
           refreshData={() => getBudgetInfo()}
+          editExpenseData={editExpenseData}
         />
       </div>
       <div className="mt-4">
         <ExpenseListTable
           expensesList={expensesList}
           refreshData={() => getBudgetInfo()}
+          editExpenseData={editExpenseData}
+          setEditExpenseData={setEditExpenseData}
+          showActionList={true}
         />
       </div>
     </div>

@@ -12,6 +12,7 @@ export const Budgets = pgTable("budgets", {
   amount: varchar("amount").notNull(),
   icon: varchar("icon"),
   createdBy: varchar("createdBy").notNull(),
+  createdAt: varchar("createdAt").notNull(),
 });
 
 export const Expenses = pgTable("expenses", {
@@ -19,5 +20,14 @@ export const Expenses = pgTable("expenses", {
   name: varchar("name").notNull(),
   amount: numeric("amount", { precision: 10, scale: 2 }).notNull().default(0),
   budgetId: integer("budgetId").references(() => Budgets.id),
+  createdBy: varchar("createdBy").notNull(),
+  createdAt: varchar("createdAt").notNull(),
+});
+
+export const Incomes = pgTable("incomes", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull().default(0),
+  createdBy: varchar("createdBy").notNull(),
   createdAt: varchar("createdAt").notNull(),
 });

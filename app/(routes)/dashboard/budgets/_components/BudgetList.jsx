@@ -2,17 +2,18 @@
 import React, { useEffect, useState } from "react";
 import CreateBudget from "./CreateBudget";
 import { db } from "@/utils/dbConfig";
-import { desc, eq, getTableColumns, sql } from "drizzle-orm";
+import { desc, eq, getTableColumns, ilike, sql } from "drizzle-orm";
 import { Budgets, Expenses } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
 import BudgetItem from "./BudgetItem";
+import moment from "moment";
 
-function BudgetList() {
+function BudgetList({ filterDate }) {
   const [budgetList, setBudgetList] = useState([]);
   const { user } = useUser();
   useEffect(() => {
     user && getBudgetList();
-  }, [user]);
+  }, [user, filterDate]);
 
   // Get budget list
   const getBudgetList = async () => {
@@ -25,6 +26,12 @@ function BudgetList() {
       .from(Budgets)
       .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
       .where(eq(Budgets.createdBy, user?.primaryEmailAddress?.emailAddress))
+      .where(
+        ilike(
+          Budgets.createdAt,
+          `%${moment(filterDate).format("MM")}/${moment().format("YYYY")}%`
+        )
+      )
       .groupBy(Budgets.id)
       .orderBy(desc(Budgets.id));
 

@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { PiggyBank, ReceiptText, Wallet } from "lucide-react";
+import {
+  PiggyBank,
+  ReceiptText,
+  Wallet,
+  CircleDollarSign,
+  HandCoins,
+} from "lucide-react";
 
-function CardInfo({ budgetList }) {
+function CardInfo({ budgetList, incomeData, expenseTotal }) {
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpend, setTotalSpend] = useState(0);
 
@@ -27,6 +33,30 @@ function CardInfo({ budgetList }) {
         <div className="grid grid-cols-1 gap-5 mt-7 md:grid-cols-2 lg:grid-cols-3">
           <div className="flex justify-between border rounded-lg p-7">
             <div>
+              <h2 className="text-sm">Total Money</h2>
+              <h2 className="text-2xl font-bold">
+                {(incomeData?.total - expenseTotal).toLocaleString("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                })}
+              </h2>
+            </div>
+            <CircleDollarSign className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
+          </div>
+          <div className="flex justify-between border rounded-lg p-7">
+            <div>
+              <h2 className="text-sm">Total Income</h2>
+              <h2 className="text-2xl font-bold">
+                {incomeData?.currentMonth?.toLocaleString("id-ID", {
+                  style: "currency",
+                  currency: "IDR",
+                })}
+              </h2>
+            </div>
+            <HandCoins className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
+          </div>
+          <div className="flex justify-between border rounded-lg p-7">
+            <div>
               <h2 className="text-sm">Total Budget</h2>
               <h2 className="text-2xl font-bold">
                 {totalBudget.toLocaleString("id-ID", {
@@ -39,9 +69,9 @@ function CardInfo({ budgetList }) {
           </div>
           <div className="flex justify-between border rounded-lg p-7">
             <div>
-              <h2 className="text-sm">Total Spend</h2>
+              <h2 className="text-sm">Total Expenses</h2>
               <h2 className="text-2xl font-bold">
-                {totalSpend.toLocaleString("id-ID", {
+                {expenseTotal?.toLocaleString("id-ID", {
                   style: "currency",
                   currency: "IDR",
                 })}
