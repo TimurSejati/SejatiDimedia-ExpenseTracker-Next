@@ -4,23 +4,20 @@ import React, { useState } from "react";
 import BudgetList from "./_components/BudgetList";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import moment from "moment";
 
 function Budget() {
   const [filterDate, setFilterDate] = useState(
     `${moment().format("YYYY")}-${moment().format("MM")}`
   );
+  // const [submitFilter, setSubmitFilter] = useState(false);
 
   return (
     <div className="p-10">
@@ -31,18 +28,21 @@ function Budget() {
           <DialogTrigger asChild>
             <Calendar className="w-8 h-8 cursor-pointer" />
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="w-[400px]">
             <DialogHeader>
               <DialogTitle>Filter Budget Date</DialogTitle>
               <DialogDescription>
                 <div className="mt-5">
                   <div className="mt-2">
-                    <h2 className="my-1 font-medium text-black">Date</h2>
-                    <Input
-                      type="month"
-                      defaultValue={filterDate}
-                      onChange={(e) => setFilterDate(e.target.value)}
-                    />
+                    <h2 className="my-2 font-medium text-black">Date</h2>
+                    <div className="flex justify-between gap-2">
+                      <input
+                        className="w-full p-2 mb-5 border rounded-lg"
+                        type="month"
+                        defaultValue={filterDate}
+                        onChange={(e) => setFilterDate(e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
               </DialogDescription>

@@ -4,17 +4,21 @@ import ExpenseListTable from "./_components/ExpenseListTable";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/utils/dbConfig";
 import { Budgets, Expenses } from "@/utils/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, ilike } from "drizzle-orm";
 import AddExpense from "./_components/AddExpense";
+import moment from "moment";
 
 function ExpensesScreen() {
   const { user } = useUser();
   const [expensesList, setExpensesList] = useState([]);
   const [editExpenseData, setEditExpenseData] = useState({});
+  const [filterDate, setFilterDate] = useState(
+    `${moment().format("YYYY")}-${moment().format("MM")}`
+  );
 
   useEffect(() => {
     user && getAllExpenses();
-  }, [user]);
+  }, [user, filterDate]);
 
   const getAllExpenses = async () => {
     const result = await db
@@ -25,8 +29,13 @@ function ExpensesScreen() {
         createdAt: Expenses.createdAt,
       })
       .from(Expenses)
-      // .rightJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
       .where(eq(Expenses.createdBy, user?.primaryEmailAddress.emailAddress))
+      .where(
+        ilike(
+          Expenses.createdAt,
+          `%${moment(filterDate).format("MM")}/${moment().format("YYYY")}%`
+        )
+      )
       .orderBy(desc(Expenses.id));
 
     setExpensesList(result);
@@ -39,7 +48,7 @@ function ExpensesScreen() {
         <div className="flex items-center gap-2"></div>
       </h2>
 
-      <div className="grid grid-cols-3 gap-2 mt-4">
+      <div className="grid gap-2 mt-4 md:grid-cols-3">
         <div className="col-span-1">
           <AddExpense
             user={user}
@@ -48,11 +57,13 @@ function ExpensesScreen() {
             editExpenseData={editExpenseData}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           <ExpenseListTable
             expensesList={expensesList}
             showActionList={true}
             setEditExpenseData={setEditExpenseData}
+            filterDate={filterDate}
+            setFilterDate={setFilterDate}
           />
         </div>
       </div>

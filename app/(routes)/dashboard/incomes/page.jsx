@@ -32,13 +32,13 @@ function IncomesScreen() {
   };
 
   return (
-    <div className="p-10">
+    <div className="p-5">
       <h2 className="flex items-center justify-between text-2xl font-bold">
         My Incomes
         <div className="flex items-center gap-2"></div>
       </h2>
 
-      <div className="grid grid-cols-3 gap-2 mt-4">
+      <div className="grid gap-2 mt-4 md:grid-cols-3">
         {/* I want to resizing grid */}
         <div className="col-span-1">
           <AddIncome
@@ -47,7 +47,7 @@ function IncomesScreen() {
             editIncomeData={editIncomeData}
           />
         </div>
-        <div className="col-span-2">
+        <div className="col-span-1 md:col-span-2">
           <IncomeListTable
             incomesList={incomesList}
             refreshData={() => getAllIncomes()}

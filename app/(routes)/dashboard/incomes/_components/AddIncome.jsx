@@ -79,7 +79,7 @@ function AddIncome({ budgetId, user, refreshData, editIncomeData }) {
   };
 
   return (
-    <div className="p-5 border rounded-lg">
+    <div className="w-full p-5 border rounded-lg">
       <div className="flex items-center gap-2">
         <HandCoins className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
         <h2 className="text-lg font-bold">Add Income</h2>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import SideNav from "./_components/SideNav";
 import DashboardHeader from "./_components/DashboardHeader";
 import { db } from "@/utils/dbConfig";
@@ -7,6 +7,13 @@ import { Budgets } from "@/utils/schema";
 import { useUser } from "@clerk/nextjs";
 import { eq } from "drizzle-orm";
 import { useRouter } from "next/navigation";
+import {
+  LayoutGrid,
+  PiggyBank,
+  ReceiptText,
+  ShieldCheck,
+  Receipt,
+} from "lucide-react";
 
 const DashboardLayout = ({ children }) => {
   const { user } = useUser();
@@ -27,13 +34,46 @@ const DashboardLayout = ({ children }) => {
     }
   };
 
+  const menuList = [
+    {
+      id: 1,
+      name: "Dashboard",
+      icon: LayoutGrid,
+      path: "/dashboard",
+    },
+    {
+      id: 2,
+      name: "Budgets",
+      icon: PiggyBank,
+      path: "/dashboard/budgets",
+    },
+    {
+      id: 3,
+      name: "Incomes",
+      icon: Receipt,
+      path: "/dashboard/incomes",
+    },
+    {
+      id: 4,
+      name: "Expenses",
+      icon: ReceiptText,
+      path: "/dashboard/expenses",
+    },
+    {
+      id: 5,
+      name: "Upgrade",
+      icon: ShieldCheck,
+      path: "/dashboard/upgrade",
+    },
+  ];
+
   return (
     <div>
-      <div className="fixed hidden md:w-64 md:block">
-        <SideNav />
+      <div>
+        <SideNav menuList={menuList} />
       </div>
       <div className="md:ml-64">
-        <DashboardHeader />
+        <DashboardHeader menuList={menuList} />
         {children}
       </div>
     </div>
