@@ -42,14 +42,13 @@ function ExpensesScreen() {
   };
 
   return (
-    <div className="p-10">
-      <h2 className="flex items-center justify-between text-2xl font-bold">
+    <div className="p-5">
+      <h2 className="flex items-center justify-between text-xl font-bold md:text-3xl">
         My Expenses
-        <div className="flex items-center gap-2"></div>
       </h2>
 
-      <div className="grid gap-2 mt-4 md:grid-cols-3">
-        <div className="col-span-1">
+      <div className="flex flex-col gap-5 mt-4 md:flex-row">
+        <div className="w-full md:w-[30%]">
           <AddExpense
             user={user}
             refreshData={() => getAllExpenses()}
@@ -57,7 +56,7 @@ function ExpensesScreen() {
             editExpenseData={editExpenseData}
           />
         </div>
-        <div className="col-span-1 md:col-span-2">
+        <div className="w-full md:w-[70%]">
           <ExpenseListTable
             expensesList={expensesList}
             showActionList={true}

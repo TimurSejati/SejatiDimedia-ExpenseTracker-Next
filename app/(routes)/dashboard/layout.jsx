@@ -59,12 +59,6 @@ const DashboardLayout = ({ children }) => {
       icon: ReceiptText,
       path: "/dashboard/expenses",
     },
-    {
-      id: 5,
-      name: "Upgrade",
-      icon: ShieldCheck,
-      path: "/dashboard/upgrade",
-    },
   ];
 
   return (

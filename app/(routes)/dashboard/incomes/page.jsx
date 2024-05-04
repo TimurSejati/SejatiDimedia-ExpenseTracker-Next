@@ -33,21 +33,19 @@ function IncomesScreen() {
 
   return (
     <div className="p-5">
-      <h2 className="flex items-center justify-between text-2xl font-bold">
+      <h2 className="flex items-center justify-between text-xl font-bold md:text-3xl">
         My Incomes
-        <div className="flex items-center gap-2"></div>
       </h2>
 
-      <div className="grid gap-2 mt-4 md:grid-cols-3">
-        {/* I want to resizing grid */}
-        <div className="col-span-1">
+      <div className="flex flex-col gap-5 mt-4 md:flex-row">
+        <div className="w-full md:w-[30%]">
           <AddIncome
             user={user}
             refreshData={() => getAllIncomes()}
             editIncomeData={editIncomeData}
           />
         </div>
-        <div className="col-span-1 md:col-span-2">
+        <div className="w-full md:w-[70%]">
           <IncomeListTable
             incomesList={incomesList}
             refreshData={() => getAllIncomes()}

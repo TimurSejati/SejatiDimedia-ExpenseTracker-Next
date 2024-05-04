@@ -98,8 +98,10 @@ function Dashboard() {
   };
 
   return (
-    <div className="p-8">
-      <h2 className="text-3xl font-bold">Hi, {user?.fullName} ✌️</h2>
+    <div className="p-5">
+      <h2 className="text-2xl font-bold md:text-3xl">
+        Hi, {user?.fullName} ✌️
+      </h2>
       <p className="text-gray-500">
         Here's what happening with your money, Lets manage your expense
       </p>

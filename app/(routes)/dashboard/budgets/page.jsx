@@ -20,15 +20,15 @@ function Budget() {
   // const [submitFilter, setSubmitFilter] = useState(false);
 
   return (
-    <div className="p-10">
+    <div className="p-5">
       <div className="flex items-center gap-4">
-        <h2 className="text-3xl font-bold">My Budgets</h2>
+        <h2 className="text-xl font-bold md:text-3xl">My Budgets</h2>
 
         <Dialog>
           <DialogTrigger asChild>
-            <Calendar className="w-8 h-8 cursor-pointer" />
+            <Calendar className="w-5 h-5 cursor-pointer md:w-8 md:h-8" />
           </DialogTrigger>
-          <DialogContent className="w-[400px]">
+          <DialogContent className="w-[350px]">
             <DialogHeader>
               <DialogTitle>Filter Budget Date</DialogTitle>
               <DialogDescription>

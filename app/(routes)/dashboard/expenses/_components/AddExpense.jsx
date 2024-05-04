@@ -82,7 +82,7 @@ function AddExpense({ budgetId, user, refreshData, editExpenseData }) {
   return (
     <div className="p-5 border rounded-lg">
       <div className="flex items-center gap-2">
-        <ReceiptText className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
+        <ReceiptText className="w-10 h-10 p-3 text-white rounded-full md:w-12 md:h-12 bg-primary" />
         <h2 className="text-lg font-bold">Add Expense</h2>
       </div>
 
