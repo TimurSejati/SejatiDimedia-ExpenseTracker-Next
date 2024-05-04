@@ -30,6 +30,7 @@ function ExpenseListTable({
   expensesList,
   refreshData,
   showActionList,
+  showFilterDate,
   setEditExpenseData,
   filterDate,
   setFilterDate,
@@ -60,7 +61,7 @@ function ExpenseListTable({
         <div className="w-full">
           <h2 className="mb-5 text-lg font-bold">Latest Expenses</h2>
         </div>
-        {showActionList && (
+        {showFilterDate && (
           <input
             className="w-[350px] p-2 mb-5 border rounded-lg"
             type="month"

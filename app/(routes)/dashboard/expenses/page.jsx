@@ -60,6 +60,7 @@ function ExpensesScreen() {
           <ExpenseListTable
             expensesList={expensesList}
             showActionList={true}
+            showFilterDate={true}
             setEditExpenseData={setEditExpenseData}
             filterDate={filterDate}
             setFilterDate={setFilterDate}

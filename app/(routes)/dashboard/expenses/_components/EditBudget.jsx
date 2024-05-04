@@ -59,7 +59,7 @@ function EditBudget({ budgetInfo, refreshData }) {
     <div>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="flex gap-2">
+          <Button className="flex gap-2" size="sm">
             <PenBox />
             Edit
           </Button>
