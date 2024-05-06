@@ -5,11 +5,16 @@ import {
   Wallet,
   CircleDollarSign,
   HandCoins,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
-function CardInfo({ budgetList, incomeData, expenseTotal }) {
+function CardInfo({ budgetList, incomesData, expensesData }) {
+  console.log(expensesData, "expense data");
   const [totalBudget, setTotalBudget] = useState(0);
   const [totalSpend, setTotalSpend] = useState(0);
+
+  const [showTotalMoney, setShowTotalMoney] = useState(false);
 
   useEffect(() => {
     budgetList && calculateCardInfo();
@@ -34,20 +39,38 @@ function CardInfo({ budgetList, incomeData, expenseTotal }) {
           <div className="flex justify-between border rounded-lg p-7">
             <div>
               <h2 className="text-sm">Total Money</h2>
-              <h2 className="text-2xl font-bold">
-                {(incomeData?.total - expenseTotal).toLocaleString("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                })}
-              </h2>
+              {showTotalMoney ? (
+                <div className="flex items-center gap-2">
+                  <EyeOff
+                    className="cursor-pointer"
+                    onClick={() => setShowTotalMoney(!showTotalMoney)}
+                  />
+                  <h2 className="text-2xl font-bold">
+                    {(
+                      incomesData?.totalIncomes - expensesData.totalExpenses
+                    ).toLocaleString("id-ID", {
+                      style: "currency",
+                      currency: "IDR",
+                    })}
+                  </h2>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Eye
+                    onClick={() => setShowTotalMoney(!showTotalMoney)}
+                    className="cursor-pointer"
+                  />
+                  <h2>*******</h2>
+                </div>
+              )}
             </div>
             <CircleDollarSign className="w-12 h-12 p-3 text-white rounded-full bg-primary" />
           </div>
           <div className="flex justify-between border rounded-lg p-7">
             <div>
-              <h2 className="text-sm">Total Income</h2>
+              <h2 className="text-sm">Total Incomes / Month</h2>
               <h2 className="text-2xl font-bold">
-                {incomeData?.currentMonth?.toLocaleString("id-ID", {
+                {(incomesData?.totalMonthly || 0).toLocaleString("id-ID", {
                   style: "currency",
                   currency: "IDR",
                 })}
@@ -57,7 +80,7 @@ function CardInfo({ budgetList, incomeData, expenseTotal }) {
           </div>
           <div className="flex justify-between border rounded-lg p-7">
             <div>
-              <h2 className="text-sm">Total Budget</h2>
+              <h2 className="text-sm">Total Budget / Month</h2>
               <h2 className="text-2xl font-bold">
                 {totalBudget.toLocaleString("id-ID", {
                   style: "currency",
@@ -69,9 +92,9 @@ function CardInfo({ budgetList, incomeData, expenseTotal }) {
           </div>
           <div className="flex justify-between border rounded-lg p-7">
             <div>
-              <h2 className="text-sm">Total Expenses</h2>
+              <h2 className="text-sm">Total Expenses / Month</h2>
               <h2 className="text-2xl font-bold">
-                {expenseTotal?.toLocaleString("id-ID", {
+                {expensesData?.totalMonthly?.toLocaleString("id-ID", {
                   style: "currency",
                   currency: "IDR",
                 })}

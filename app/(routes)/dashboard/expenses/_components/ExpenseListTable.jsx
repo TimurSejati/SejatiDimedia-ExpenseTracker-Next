@@ -34,6 +34,7 @@ function ExpenseListTable({
   setEditExpenseData,
   filterDate,
   setFilterDate,
+  titleListTable,
 }) {
   const copyExpenseValues = async (expense, type) => {
     setEditExpenseData({ ...expense, type });
@@ -52,15 +53,16 @@ function ExpenseListTable({
   };
 
   const countTotalAmount = (data) => {
-    return data.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+    return data?.reduce((acc, item) => acc + parseFloat(item.amount), 0);
   };
 
   return (
     <div className="mt-3">
       <div className="flex items-center">
         <div className="w-full">
-          <h2 className="mb-5 text-lg font-bold">Latest Expenses</h2>
+          <h2 className="mb-5 text-lg font-bold">{titleListTable}</h2>
         </div>
+
         {showFilterDate && (
           <input
             className="w-[350px] p-2 mb-5 border rounded-lg"
@@ -86,7 +88,7 @@ function ExpenseListTable({
           </TableRow>
         </TableHeader>
         <TableBody className="bg-gray-50">
-          {expensesList.map((expense, index) => (
+          {expensesList?.map((expense, index) => (
             <TableRow key={index}>
               {showActionList && (
                 <TableCell className="text-right">
@@ -143,20 +145,21 @@ function ExpenseListTable({
             </TableRow>
           ))}
         </TableBody>
-        {showActionList && (
-          <TableFooter className="bg-gray-200">
-            <TableRow>
-              <TableCell className="text-center">Total</TableCell>
-              <TableCell className="text-center" colSpan="2"></TableCell>
-              <TableCell className="text-center">
-                {countTotalAmount(expensesList).toLocaleString("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                })}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
-        )}
+        <TableFooter className="bg-gray-200">
+          <TableRow>
+            <TableCell className="text-center">Total</TableCell>
+            <TableCell
+              className="text-center"
+              colSpan={`${showActionList ? "2" : "1"}`}
+            ></TableCell>
+            <TableCell className="text-center">
+              {countTotalAmount(expensesList)?.toLocaleString("id-ID", {
+                style: "currency",
+                currency: "IDR",
+              })}
+            </TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
     </div>
   );

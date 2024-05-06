@@ -14,13 +14,19 @@ import moment from "moment";
 function Dashboard() {
   const [budgetList, setBudgetList] = useState([]);
   const [expensesList, setExpensesList] = useState([]);
-  const [incomeData, setIncomeData] = useState(0);
-  const [expenseTotal, setExpenseTotal] = useState(0);
+  const [incomesData, setIncomesData] = useState(0);
+  const [expensesData, setExpensesData] = useState({});
   const { user } = useUser();
+
+  let daily = `${moment().format("DD")}/${moment().format(
+    "MM"
+  )}/${moment().format("YYYY")}`;
+  let monthly = `${moment().format("MM")}/${moment().format("YYYY")}`;
 
   useEffect(() => {
     user && getBudgetList();
-    getAllIncomes();
+    getIncomes("monthly", `%${monthly}%`);
+    getIncomes("all");
   }, [user]);
 
   // Get budget list
@@ -34,67 +40,104 @@ function Dashboard() {
       .from(Budgets)
       .leftJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
       .where(eq(Budgets.createdBy, user?.primaryEmailAddress?.emailAddress))
-      .where(
-        ilike(
-          Budgets.createdAt,
-          `%${moment().format("MM")}/${moment().format("YYYY")}%`
-        )
-      )
+      .where(ilike(Budgets.createdAt, `%${monthly}%`))
       .groupBy(Budgets.id)
       .orderBy(desc(Budgets.id));
 
     setBudgetList(result);
-    getAllExpenses();
+
+    // Monthly
+    getExpenses("monthly", `%${monthly}%`);
+
+    // Daily
+    getExpenses("daily", `%${daily}%`);
+
+    // All
+    getExpenses("all");
   };
 
-  const getAllIncomes = async () => {
-    const result = await db
-      .select({
-        totalIncomes: sql`sum(${Incomes.amount})`.mapWith(Number),
-      })
-      .from(Incomes)
-      .where(eq(Incomes.createdBy, user?.primaryEmailAddress.emailAddress))
-      .groupBy(Incomes.createdBy);
+  const getIncomes = async (type, time) => {
+    if (type === "monthly") {
+      const result = await db
+        .select({
+          total: sql`sum(${Incomes.amount})`.mapWith(Number),
+        })
+        .from(Incomes)
+        .where(eq(Incomes.createdBy, user?.primaryEmailAddress.emailAddress))
+        .where(ilike(Incomes.createdAt, time))
+        .groupBy(Incomes.createdBy);
 
-    const resultCurrentMonth = await db
-      .select({
-        total: sql`sum(${Incomes.amount})`.mapWith(Number),
-      })
-      .from(Incomes)
-      .where(eq(Incomes.createdBy, user?.primaryEmailAddress.emailAddress))
-      .where(
-        ilike(
-          Incomes.createdAt,
-          `%${moment().format("MM")}/${moment().format("YYYY")}%`
-        )
-      )
-      .groupBy(Incomes.createdBy);
+      setIncomesData((prevData) => ({
+        ...prevData,
+        totalMonthly: result[0]?.total,
+      }));
+    } else if (type === "all") {
+      const result = await db
+        .select({
+          totalIncomes: sql`sum(${Incomes.amount})`.mapWith(Number),
+        })
+        .from(Incomes)
+        .where(eq(Incomes.createdBy, user?.primaryEmailAddress.emailAddress))
+        .groupBy(Incomes.createdBy);
 
-    setIncomeData({
-      total: result[0]?.totalIncomes,
-      currentMonth: resultCurrentMonth[0]?.total,
-    });
+      setIncomesData((prevData) => ({
+        ...prevData,
+        totalIncomes: result[0]?.totalIncomes,
+      }));
+    }
   };
 
-  const getAllExpenses = async () => {
-    const result = await db
-      .select({
-        id: Expenses.id,
-        name: Expenses.name,
-        amount: Expenses.amount,
-        createdAt: Expenses.createdAt,
-      })
-      .from(Expenses)
-      // .rightJoin(Expenses, eq(Budgets.id, Expenses.budgetId))
-      .where(eq(Expenses.createdBy, user?.primaryEmailAddress.emailAddress))
-      .orderBy(desc(Expenses.id));
+  const getExpenses = async (type, time) => {
+    if (type === "daily" || type === "monthly") {
+      const result = await db
+        .select({
+          id: Expenses.id,
+          name: Expenses.name,
+          amount: Expenses.amount,
+          createdAt: Expenses.createdAt,
+        })
+        .from(Expenses)
+        .where(eq(Expenses.createdBy, user?.primaryEmailAddress.emailAddress))
+        .where(ilike(Expenses.createdAt, time))
+        .orderBy(desc(Expenses.id));
 
-    setExpensesList(result);
-    const totalAmount = result.reduce(
-      (total, expense) => total + parseFloat(expense.amount),
-      0
-    );
-    setExpenseTotal(totalAmount);
+      if (type === "daily") {
+        setExpensesData((prevData) => ({
+          ...prevData,
+          list: result,
+        }));
+      } else if (type === "monthly") {
+        const totalMonthly = result.reduce(
+          (total, expense) => total + parseFloat(expense.amount),
+          0
+        );
+        setExpensesData((prevData) => ({
+          ...prevData,
+          totalMonthly: totalMonthly,
+        }));
+      }
+    } else if (type === "all") {
+      const result = await db
+        .select({
+          id: Expenses.id,
+          name: Expenses.name,
+          amount: Expenses.amount,
+          createdAt: Expenses.createdAt,
+        })
+        .from(Expenses)
+        .where(eq(Expenses.createdBy, user?.primaryEmailAddress.emailAddress))
+        .orderBy(desc(Expenses.id));
+
+      const totalAmount = result.reduce(
+        (total, expense) => total + parseFloat(expense.amount),
+        0
+      );
+
+      setExpensesData((prevData) => ({
+        ...prevData,
+        totalExpenses: totalAmount,
+      }));
+    }
   };
 
   return (
@@ -107,16 +150,18 @@ function Dashboard() {
       </p>
       <CardInfo
         budgetList={budgetList}
-        incomeData={incomeData}
-        expenseTotal={expenseTotal}
+        incomesData={incomesData}
+        expensesData={expensesData}
       />
       <div className="grid grid-cols-1 gap-5 mt-6 md:grid-cols-3">
         <div className="md:col-span-2">
           <BarChartDashboard budgetList={budgetList} />
 
           <ExpenseListTable
-            expensesList={expensesList}
+            expensesList={expensesData.list}
             refreshData={() => getBudgetList()}
+            titleListTable={"Daily Expenses"}
+            // showActionList={true}
           />
         </div>
         <div className="grid gap-5">

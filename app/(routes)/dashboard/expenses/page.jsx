@@ -64,6 +64,7 @@ function ExpensesScreen() {
             setEditExpenseData={setEditExpenseData}
             filterDate={filterDate}
             setFilterDate={setFilterDate}
+            titleListTable={"Monthly Expenses"}
           />
         </div>
       </div>
